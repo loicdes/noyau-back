@@ -38,6 +38,9 @@ io.on('connection', (socket) => {
     socket.on('DOMINOS-TURN-OVER', (payload) => {
         DOMINOS.play(payload, io);
     });
+    socket.on('DOMINOS-DISCONNECT', (payload) => {
+        DOMINOS.disconnect(payload, io);
+    });
 });
 
 server.listen(port, () => {
