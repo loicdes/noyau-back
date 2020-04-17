@@ -19,8 +19,8 @@ exports.joinGame = (payload, io) => {
     } else {
         // players.pop();
         // this.joinGame(payload, io);
-        spectators.push(payload);
-        io.emit('DOMINOS-JOINED-SPECTATOR', {news: payload + ' watches the game.', players, spectators});
+         spectators.push(payload);
+         io.emit('DOMINOS-JOINED-SPECTATOR', {news: payload + ' watches the game.', players, spectators});
         
     }
 };
@@ -28,13 +28,17 @@ exports.joinGame = (payload, io) => {
 exports.play = (payload, io) => {
     let playerIndex = players.findIndex(p => p === payload.player);
     playerIndex = playerIndex + 1 < players.length ? playerIndex + 1 : 0;
-    io.emit('DOMINOS-NEXT-PLAYER', { board: payload.board, nextPlayer: players[playerIndex]});
+    if (payload.hand.length === 0) {
+        io.emit('DOMINOS-GAME-OVER', { board: payload.board, winner: payload.player});
+    } else {
+        io.emit('DOMINOS-NEXT-PLAYER', { board: payload.board, nextPlayer: players[playerIndex]});
+    }
 };
 
 generateHands = () => {
     let dominos = [];
     for(let i = 0; i < 7; i++) {
-        for(let j = 0; j < 7; j++) {
+        for(let j = i; j < 7; j++) {
             dominos.push({left: i, right: j});
         }
     }
