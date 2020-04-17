@@ -42,7 +42,7 @@ generateHands = () => {
             dominos.push({left: i, right: j});
         }
     }
-    dominos = shuffle(dominos);
+    dominos = shuffle(shuffle(shuffle(dominos)));
     return [
         dominos.slice(0, 7),
         dominos.slice(7, 14),
