@@ -8,7 +8,7 @@ exports.joinGame = (payload, io) => {
     if (GAMES[payload.room].players.length < maxPlayers) {
         GAMES[payload.room].players.push(payload.user);
         io.emit('DOMINOS-JOINED-' + payload.room, 
-        {news: payload.user + ' has joined the game.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
+        {news: payload.user + ' a rejoint la partie.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
         
         if (GAMES[payload.room].players.length === maxPlayers) {
             board = [];
@@ -20,10 +20,10 @@ exports.joinGame = (payload, io) => {
             io.emit('DOMINOS-START-GAME-' + payload.room, { board, nextPlayer: GAMES[payload.room].players[0], hands: playerHands});
         }
     } else {
-        // players.pop();
+        // GAMES[payload.room].players.pop();
         // this.joinGame(payload, io);
-        GAMES[payload.room].spectators.push(payload.user);
-        io.emit('DOMINOS-JOINED-SPECTATOR-' + payload.room, {news: payload.user + ' watches the game.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
+         GAMES[payload.room].spectators.push(payload.user);
+         io.emit('DOMINOS-JOINED-SPECTATOR-' + payload.room, {news: payload.user + ' observe le jeu.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
         
     }
 };
@@ -42,7 +42,7 @@ exports.disconnect = (payload, io) => {
     let playerIndex = GAMES[payload.room].players.findIndex(p => p === payload.player);
     GAMES[payload.room].players.splice(playerIndex, 1);
         io.emit('DOMINOS-JOINED-' + payload.room, 
-        {news: payload.user + ' disconnected.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
+        {news: payload.user + ' s\'est déconnecté.', players: GAMES[payload.room].players, spectators: GAMES[payload.room].spectators});
 };
 
 generateHands = () => {
