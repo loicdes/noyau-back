@@ -8,6 +8,7 @@ let socketIO = require('socket.io');
 let io = socketIO(server);
 
 let DOMINOS = require('./handlers/dominos');
+let PYRAMIDE = require('./handlers/pyramide');
 
 const port = process.env.PORT || 5000;
 
@@ -40,6 +41,24 @@ io.on('connection', (socket) => {
     });
     socket.on('DOMINOS-DISCONNECT', (payload) => {
         DOMINOS.disconnect(payload, io);
+    });
+    socket.on('PYRAMIDE-JOINED', (payload) => {
+        PYRAMIDE.joinGame(payload, io);
+    });
+    socket.on('PYRAMIDE-STARTED', (payload) => {
+        PYRAMIDE.startGame(payload, io);
+    });
+    socket.on('PYRAMIDE-TURN-OVER', (payload) => {
+        PYRAMIDE.play(payload, io);
+    });
+    socket.on('PYRAMIDE-SHOW', (payload) => {
+        PYRAMIDE.showCard(payload, io);
+    });
+    socket.on('PYRAMIDE-REVEAL', (payload) => {
+        PYRAMIDE.reveal(payload, io);
+    });
+    socket.on('PYRAMIDE-DISCONNECT', (payload) => {
+        PYRAMIDE.disconnect(payload, io);
     });
 });
 
