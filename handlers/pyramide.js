@@ -19,7 +19,7 @@ exports.joinGame = (payload, io) => {
     if (!GAMES[payload.room]){
         GAMES[payload.room] = { players: [], spectators: [], status: GAME_STATUS.NOT_STARTED };
     }
-    if (GAMES[payload.room].status === GAME_STATUS.NOT_STARTED) {
+    if (GAMES[payload.room].status === GAME_STATUS.NOT_STARTED && !GAMES[payload.room].players.includes(payload.user)) {
         GAMES[payload.room].players.push(payload.user);
         io.emit('PYRAMIDE-JOINED-' + payload.room, 
         {news: payload.user + ' a rejoint la partie.', players: GAMES[payload.room].players});
