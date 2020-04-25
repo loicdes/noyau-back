@@ -67,9 +67,11 @@ exports.play = (payload, io) => {
 exports.disconnect = (payload, io) => {
     try {    
         let playerIndex = GAMES[payload.room].players.findIndex(p => p === payload.player);
-        GAMES[payload.room].players.splice(playerIndex, 1);
-            io.emit('DOMINOS-JOINED-' + payload.room, 
-            {news: payload.user + ' s\'est déconnecté.', players: GAMES[payload.room].players});
+        if (playerIndex > -1) {
+            GAMES[payload.room].players.splice(playerIndex, 1);
+        }
+        io.emit('DOMINOS-JOINED-' + payload.room, 
+        {news: payload.user + ' s\'est déconnecté.', players: GAMES[payload.room].players});
     
     } catch (e) {}
 };
@@ -107,7 +109,7 @@ shuffle = (arra1) => {
 
 findNextPlayer = (hands) => {
     for(let i = 6; i >= 0; i--) {
-        for(let j = 0; j >= hands.length; j--) {
+        for(let j = 0; j < hands.length; j--) {
             if (hands[i].some(d=> d.left === d.right  && d.left === i)) {
                 return j;
             }
