@@ -56,6 +56,7 @@ exports.play = (payload, io) => {
         GAMES[payload.room].board = payload.board;
         if (payload.hand.length === 0) {
             io.emit('DOMINOS-GAME-OVER-' + payload.room, { board: payload.board, winner: payload.player});
+            startGame(payload, io);
         } else {
             io.emit('DOMINOS-NEXT-PLAYER-' + payload.room, { board: payload.board, nextPlayer: GAMES[payload.room].players[playerIndex]});
         }   
