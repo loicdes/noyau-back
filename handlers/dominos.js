@@ -17,7 +17,7 @@ exports.joinGame = (payload, io) => {
         {news: payload.user + ' a rejoint la partie.', players: GAMES[payload.room].players });
         
         if (GAMES[payload.room].players.length === maxPlayers) {
-            startGame(payload, io);
+            startGame(payload, io, undefined);
         }
     } else {
         // GAMES[payload.room].players.pop();
@@ -28,7 +28,7 @@ exports.joinGame = (payload, io) => {
 } catch (e) {}
 };
 
-startGame = (payload, io) => {
+startGame = (payload, io, nextPlayer) => {
     try {
         GAMES[payload.room].board = [];
         GAMES[payload.room].nextPlayer = GAMES[payload.room].players[0];
@@ -37,7 +37,7 @@ startGame = (payload, io) => {
         playerHands[GAMES[payload.room].players[0]] = hands[0];
         playerHands[GAMES[payload.room].players[1]] = hands[1];
         playerHands[GAMES[payload.room].players[2]] = hands[2];
-        io.emit('DOMINOS-START-GAME-' + payload.room, { board: [], nextPlayer: GAMES[payload.room].players[0], hands: playerHands});
+        io.emit('DOMINOS-START-GAME-' + payload.room, { board: [], nextPlayer: nextPlayer || GAMES[payload.room].players[findNextPlayer(hands)], hands: playerHands});
     } catch(e) {}
 };
 
@@ -48,7 +48,7 @@ exports.play = (payload, io) => {
         GAMES[payload.room].boude = 0;
         io.emit('DOMINOS-JOINED-' + payload.room, 
         {news: 'Tous les joueurs sont boudés, une partie a été relancée', boude: true, players: GAMES[payload.room].players });
-        startGame(payload, io);
+        startGame(payload, io, undefined);
     } else {
         let playerIndex = GAMES[payload.room].players.findIndex(p => p === payload.player);
         playerIndex = playerIndex + 1 < GAMES[payload.room].players.length ? playerIndex + 1 : 0;
@@ -56,7 +56,7 @@ exports.play = (payload, io) => {
         GAMES[payload.room].board = payload.board;
         if (payload.hand.length === 0) {
             io.emit('DOMINOS-GAME-OVER-' + payload.room, { board: payload.board, winner: payload.player});
-            startGame(payload, io);
+            startGame(payload, io, payload.player);
         } else {
             io.emit('DOMINOS-NEXT-PLAYER-' + payload.room, { board: payload.board, nextPlayer: GAMES[payload.room].players[playerIndex]});
         }   
@@ -81,7 +81,7 @@ generateHands = () => {
             dominos.push({left: i, right: j});
         }
     }
-    dominos = shuffle(shuffle(shuffle(dominos)));
+    dominos = shuffle(shuffle(shuffle(shuffle(shuffle(dominos)))));
     return [
         dominos.slice(0, 7),
         dominos.slice(7, 14),
@@ -103,4 +103,15 @@ shuffle = (arra1) => {
         arra1[index] = temp;
     }
     return arra1;
-}
+};
+
+findNextPlayer = (hands) => {
+    for(let i = 6; i >= 0; i--) {
+        for(let j = 0; j >= hands.length; j--) {
+            if (hands[i].some(d=> d.left === d.right  && d.left === i)) {
+                return j;
+            }
+        }
+    }
+    return 0;
+};
