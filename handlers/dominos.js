@@ -109,7 +109,7 @@ shuffle = (arra1) => {
 
 findNextPlayer = (hands) => {
     for(let i = 6; i >= 0; i--) {
-        for(let j = 0; j < hands.length; j--) {
+        for(let j = 0; j < hands.length; j++) {
             if (hands[i].some(d=> d.left === d.right  && d.left === i)) {
                 return j;
             }
